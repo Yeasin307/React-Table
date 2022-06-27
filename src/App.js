@@ -1,25 +1,86 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import styled from 'styled-components'
+import { data } from './Components/makeData'
+import Table from './Components/Table'
+
+const Styles = styled.div`
+  padding: 1rem;
+
+  table {
+    border-spacing: 0;
+    border: 1px solid black;
+
+    tr {
+      :last-child {
+        td {
+          border-bottom: 0;
+        }
+      }
+    }
+
+    th,
+    td {
+      margin: 0;
+      padding: 0.5rem;
+      border-bottom: 1px solid black;
+      border-right: 1px solid black;
+
+      :last-child {
+        border-right: 0;
+      }
+    }
+  }
+`
 
 function App() {
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: 'React Table',
+        columns: [
+          {
+            Header: 'Task Number',
+            accessor: 'tasknum',
+          },
+          {
+            Header: 'Title',
+            accessor: 'title',
+          },
+          {
+            Header: 'Deadline',
+            accessor: 'deadline',
+          },
+          {
+            Header: 'Due Date',
+            accessor: 'duedate',
+          },
+          {
+            Header: 'End Date',
+            accessor: 'enddate',
+          },
+          {
+            Header: 'Description',
+            accessor: 'description',
+          },
+          {
+            Header: 'Priority',
+            accessor: 'priority',
+          },
+          {
+            Header: 'Progress',
+            accessor: 'progress',
+          },
+        ],
+      }
+    ],
+    []
+  )
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Styles>
+      <Table columns={columns} data={data} />
+    </Styles>
+  )
 }
 
-export default App;
+export default App
