@@ -45,11 +45,11 @@ const Table = ({ columns, data }) => {
     return (
         <>
             {columnHidden ?
-                <div style={{ position: 'fixed', right: '5px' }}>
+                <div style={{ position: 'fixed', right: '5px', zIndex: '3' }}>
                     <button style={{ border: "none", color: 'white', background: 'black', padding: '0', margin: '0' }} onClick={() => setColumnHidden(false)}><BsPlus size={25} /></button>
                 </div>
                 :
-                <div style={{ position: 'fixed', right: '5px' }}>
+                <div style={{ position: 'fixed', right: '5px', zIndex: '3' }}>
                     <div style={{ border: '1px black solid', width: '120px', marginBottom: '5px', background: 'black', color: 'white' }}>
                         <div style={{ display: 'flex', justifyContent: 'end' }}>
                             <button style={{ color: 'white', border: "none", background: 'none', padding: '0', margin: '0' }} onClick={() => setColumnHidden(true)}><AiOutlineClose size={20} /></button>
@@ -70,23 +70,23 @@ const Table = ({ columns, data }) => {
                     </div>
                 </div>
             }
-            <table {...getTableProps()}>
-                <thead>
+            <table {...getTableProps()} className="table sticky">
+                <thead className="header">
                     {headerGroups.slice(1, 2).map(headerGroup => (
-                        <tr {...headerGroup.getHeaderGroupProps()}>
+                        <tr {...headerGroup.getHeaderGroupProps()} className="tr">
                             {headerGroup.headers.map(column => (
-                                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                                <th {...column.getHeaderProps()} className="th">{column.render('Header')}</th>
                             ))}
                         </tr>
                     ))}
                 </thead>
-                <tbody {...getTableBodyProps()}>
+                <tbody {...getTableBodyProps()} className="body">
                     {rows.map((row, i) => {
                         prepareRow(row)
                         return (
-                            <tr {...row.getRowProps()}>
+                            <tr {...row.getRowProps()} className="tr">
                                 {row.cells.map(cell => {
-                                    return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                                    return <td {...cell.getCellProps()} className="td">{cell.render('Cell')}</td>
                                 })}
                             </tr>
                         )

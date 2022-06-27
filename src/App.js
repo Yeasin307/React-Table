@@ -4,39 +4,75 @@ import { data } from './Components/makeData'
 import Table from './Components/Table'
 
 const Styles = styled.div`
-  padding: 1rem;
-
-  table {
-    border-spacing: 0;
-    border: 1px solid black;
-
-    tr {
+  .table {
+    border: 1px solid #ddd;
+ 
+    .tr {
       :last-child {
-        td {
+        .td {
           border-bottom: 0;
         }
       }
     }
-
-    th,
-    td {
-      margin: 0;
-      padding: 0.5rem;
-      border-bottom: 1px solid black;
-      border-right: 1px solid black;
-
+ 
+    .th,
+    .td {
+      padding: 5px;
+      border-bottom: 1px solid #ddd;
+      border-right: 1px solid #ddd;
+      background-color: #fff;
+      overflow: hidden;
+ 
       :last-child {
         border-right: 0;
       }
     }
+ 
+    &.sticky {
+      overflow: scroll;
+      .header,
+      .footer {
+        position: sticky;
+        z-index: 1;
+        width: fit-content;
+      }
+ 
+      .header {
+        top: 0;
+        box-shadow: 0px 3px 3px #ccc;
+      }
+ 
+      .footer {
+        bottom: 0;
+        box-shadow: 0px -3px 3px #ccc;
+      }
+ 
+      .body {
+        position: relative;
+        z-index: 0;
+      }
+ 
+      [data-sticky-td] {
+        position: sticky;
+      }
+ 
+      [data-sticky-last-left-td] {
+        box-shadow: 2px 0px 3px #ccc;
+      }
+ 
+      [data-sticky-first-right-td] {
+        box-shadow: -2px 0px 3px #ccc;
+      }
+    }
   }
-`
+`;
 
 function App() {
   const columns = React.useMemo(
     () => [
       {
-        Header: 'React Table',
+        Header: 'Sticky Columns',
+        sticky: 'left',
         columns: [
           {
             Header: 'Task Number',
@@ -46,6 +82,12 @@ function App() {
             Header: 'Title',
             accessor: 'title',
           },
+
+        ],
+      },
+      {
+        Header: 'Non-Sticky Columns',
+        columns: [
           {
             Header: 'Deadline',
             accessor: 'deadline',
@@ -71,7 +113,7 @@ function App() {
             accessor: 'progress',
           },
         ],
-      }
+      },
     ],
     []
   )
