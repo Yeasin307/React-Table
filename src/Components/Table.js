@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
-import { useTable, useBlockLayout } from 'react-table'
+import { useTable, useBlockLayout, useFilters } from 'react-table'
 import { BsPlus } from "react-icons/bs";
 import { AiOutlineClose } from "react-icons/ai";
 import { useSticky } from 'react-table-sticky';
 
 const Table = ({ columns, data }) => {
+
+
+    // Default columns and Hiding columns section
     const [columnHidden, setColumnHidden] = useState(true);
 
     const IndeterminateCheckbox = React.forwardRef(
@@ -22,7 +25,32 @@ const Table = ({ columns, data }) => {
 
     const initialState = { hiddenColumns: ['description', 'priority', 'progress', 'createdby'] };
 
-    // Use the state and functions returned from useTable to build your UI
+
+    // Filtering section
+    function DefaultColumnFilter({
+        column: { filterValue, preFilteredRows, setFilter }
+    }) {
+
+        return (
+            <input
+                style={{ width: '90%' }}
+                value={filterValue || ""}
+                onChange={(e) => {
+                    setFilter(e.target.value || undefined);
+                }}
+                placeholder={'Search Here'}
+            />
+        );
+    }
+
+    const defaultColumn = React.useMemo(
+        () => ({
+            Filter: DefaultColumnFilter
+        }),
+        []
+    );
+
+    // Use the state and functions returned from useTable to build UI
     const {
         getTableProps,
         getTableBodyProps,
@@ -37,9 +65,14 @@ const Table = ({ columns, data }) => {
             columns,
             initialState,
             data,
+            defaultColumn
         },
         useBlockLayout,
-        useSticky);
+        useSticky,
+        useFilters
+    );
+
+    const firstPageRows = rows.slice(0, 20);
 
     // Render the UI for your table
     return (
@@ -70,18 +103,23 @@ const Table = ({ columns, data }) => {
                     </div>
                 </div>
             }
+
             <table {...getTableProps()} className="table sticky">
+
                 <thead className="header">
                     {headerGroups.slice(1, 2).map(headerGroup => (
                         <tr {...headerGroup.getHeaderGroupProps()} className="tr">
                             {headerGroup.headers.map(column => (
-                                <th {...column.getHeaderProps()} className="th">{column.render('Header')}</th>
+                                <th {...column.getHeaderProps()} className="th">{column.render('Header')}
+                                    <div>{column.canFilter ? column.render("Filter") : null}</div>
+                                </th>
                             ))}
                         </tr>
                     ))}
                 </thead>
+
                 <tbody {...getTableBodyProps()} className="body">
-                    {rows.map((row, i) => {
+                    {firstPageRows.map((row, i) => {
                         prepareRow(row)
                         return (
                             <tr {...row.getRowProps()} className="tr">
@@ -92,10 +130,20 @@ const Table = ({ columns, data }) => {
                         )
                     })}
                 </tbody>
+
             </table>
             <pre>{JSON.stringify(state, null, 2)}</pre>
         </>
     )
 };
+
+function filterGreaterThan(rows, id, filterValue) {
+    return rows.filter((row) => {
+        const rowValue = row.values[id];
+        return rowValue >= filterValue;
+    });
+}
+
+filterGreaterThan.autoRemove = (val) => typeof val !== "number";
 
 export default Table;

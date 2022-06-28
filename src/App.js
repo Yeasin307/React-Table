@@ -4,6 +4,8 @@ import { data } from './Components/makeData'
 import Table from './Components/Table'
 
 const Styles = styled.div`
+  padding: 10px;
+
   .table {
     border: 1px solid #ddd;
  
@@ -22,6 +24,7 @@ const Styles = styled.div`
       border-right: 1px solid #ddd;
       background-color: #fff;
       overflow: hidden;
+      word-wrap: break-word;
  
       :last-child {
         border-right: 0;
@@ -76,11 +79,11 @@ function App() {
         columns: [
           {
             Header: 'Task Number',
-            accessor: 'tasknum',
+            accessor: 'tasknum'
           },
           {
             Header: 'Title',
-            accessor: 'title',
+            accessor: 'title'
           },
 
         ],
@@ -90,27 +93,31 @@ function App() {
         columns: [
           {
             Header: 'Deadline',
-            accessor: 'deadline',
+            accessor: 'deadline'
           },
           {
             Header: 'Due Date',
-            accessor: 'duedate',
+            accessor: 'duedate'
           },
           {
             Header: 'End Date',
-            accessor: 'enddate',
+            accessor: 'enddate'
           },
           {
             Header: 'Description',
-            accessor: 'description',
+            accessor: 'description'
           },
           {
             Header: 'Priority',
-            accessor: 'priority',
+            accessor: 'priority'
           },
           {
             Header: 'Progress',
-            accessor: 'progress',
+            accessor: 'progress'
+          },
+          {
+            Header: 'Created By',
+            accessor: 'createdby'
           },
         ],
       },
