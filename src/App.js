@@ -1,10 +1,10 @@
-import React from 'react'
-import styled from 'styled-components'
-import { data } from './Components/makeData'
-import Table from './Components/Table'
+import React from 'react';
+import styled from 'styled-components';
+import { data } from './Components/makeData';
+import Table from './Components/Table';
 
 const Styles = styled.div`
-  padding: 10px;
+padding: 1rem;
 
   .table {
     border: 1px solid #ddd;
@@ -25,9 +25,27 @@ const Styles = styled.div`
       background-color: #fff;
       overflow: hidden;
       word-wrap: break-word;
- 
+      position: relative;
+
       :last-child {
         border-right: 0;
+      }
+
+      .resizer {
+        display: inline-block;
+        background: blue;
+        width: 10px;
+        height: 100%;
+        position: absolute;
+        right: 0;
+        top: 0;
+        transform: translateX(50%);
+        z-index: 1;
+        touch-action:none;
+
+        &.isResizing {
+          background: red;
+        }
       }
     }
  
@@ -79,11 +97,13 @@ function App() {
         columns: [
           {
             Header: 'Task Number',
-            accessor: 'tasknum'
+            accessor: 'tasknum',
+            width: 150
           },
           {
             Header: 'Title',
-            accessor: 'title'
+            accessor: 'title',
+            width: 320
           },
 
         ],
@@ -105,7 +125,8 @@ function App() {
           },
           {
             Header: 'Description',
-            accessor: 'description'
+            accessor: 'description',
+            width: 200
           },
           {
             Header: 'Priority',
@@ -117,7 +138,8 @@ function App() {
           },
           {
             Header: 'Created By',
-            accessor: 'createdby'
+            accessor: 'createdby',
+            width: 350
           },
         ],
       },

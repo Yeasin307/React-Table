@@ -1,11 +1,10 @@
-import React, { useState } from 'react'
-import { useTable, useBlockLayout, useFilters } from 'react-table'
+import React, { useState } from 'react';
+import { useTable, useBlockLayout, useFilters, useResizeColumns } from 'react-table';
 import { BsPlus } from "react-icons/bs";
 import { AiOutlineClose } from "react-icons/ai";
 import { useSticky } from 'react-table-sticky';
 
 const Table = ({ columns, data }) => {
-
 
     // Default columns and Hiding columns section
     const [columnHidden, setColumnHidden] = useState(true);
@@ -25,7 +24,6 @@ const Table = ({ columns, data }) => {
 
     const initialState = { hiddenColumns: ['description', 'priority', 'progress', 'createdby'] };
 
-
     // Filtering section
     function DefaultColumnFilter({
         column: { filterValue, preFilteredRows, setFilter }
@@ -33,7 +31,7 @@ const Table = ({ columns, data }) => {
 
         return (
             <input
-                style={{ width: '90%' }}
+                style={{ width: '80%' }}
                 value={filterValue || ""}
                 onChange={(e) => {
                     setFilter(e.target.value || undefined);
@@ -45,7 +43,10 @@ const Table = ({ columns, data }) => {
 
     const defaultColumn = React.useMemo(
         () => ({
-            Filter: DefaultColumnFilter
+            Filter: DefaultColumnFilter,
+            minWidth: 100,
+            width: 125,
+            maxWidth: 400
         }),
         []
     );
@@ -60,6 +61,7 @@ const Table = ({ columns, data }) => {
         allColumns,
         getToggleHideAllColumnsProps,
         state,
+        resetResizing
     } = useTable(
         {
             columns,
@@ -68,6 +70,7 @@ const Table = ({ columns, data }) => {
             defaultColumn
         },
         useBlockLayout,
+        useResizeColumns,
         useSticky,
         useFilters
     );
@@ -77,6 +80,8 @@ const Table = ({ columns, data }) => {
     // Render the UI for your table
     return (
         <>
+            <button style={{ borderRadius: '2.5px', background: 'black', color: 'white', marginBottom: '10px', cursor: 'pointer', fontWeight: '500' }} onClick={resetResizing}>Reset Resizing</button>
+
             {columnHidden ?
                 <div style={{ position: 'fixed', right: '5px', zIndex: '3' }}>
                     <button style={{ border: "none", color: 'white', background: 'black', padding: '0', margin: '0' }} onClick={() => setColumnHidden(false)}><BsPlus size={25} /></button>
@@ -111,7 +116,11 @@ const Table = ({ columns, data }) => {
                         <tr {...headerGroup.getHeaderGroupProps()} className="tr">
                             {headerGroup.headers.map(column => (
                                 <th {...column.getHeaderProps()} className="th">{column.render('Header')}
-                                    <div>{column.canFilter ? column.render("Filter") : null}</div>
+                                    <div {...column.getResizerProps()}
+                                        className={`resizer ${column.isResizing ? 'isResizing' : ''}`} />
+                                    <div>
+                                        {column.canFilter ? column.render("Filter") : null}
+                                    </div>
                                 </th>
                             ))}
                         </tr>
