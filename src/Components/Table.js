@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useTable, useBlockLayout, useFilters, useResizeColumns } from 'react-table';
+import { useTable, useBlockLayout, useFilters, useResizeColumns, useExpanded } from 'react-table';
 import { BsPlus } from "react-icons/bs";
 import { AiOutlineClose } from "react-icons/ai";
 import { useSticky } from 'react-table-sticky';
 
-const Table = ({ columns, data }) => {
+const Table = ({ columns: userColumns, updateMyData, data, renderRowSubComponent }) => {
 
     // Default columns and Hiding columns section
     const [columnHidden, setColumnHidden] = useState(true);
@@ -31,7 +31,7 @@ const Table = ({ columns, data }) => {
 
         return (
             <input
-                style={{ width: '80%' }}
+                style={{ marginTop: '5px', height: '15px', width: '80%', border: '1px solid gray', borderRadius: '2.5px' }}
                 value={filterValue || ""}
                 onChange={(e) => {
                     setFilter(e.target.value || undefined);
@@ -44,7 +44,7 @@ const Table = ({ columns, data }) => {
     const defaultColumn = React.useMemo(
         () => ({
             Filter: DefaultColumnFilter,
-            minWidth: 100,
+            minWidth: 75,
             width: 125,
             maxWidth: 400
         }),
@@ -58,24 +58,26 @@ const Table = ({ columns, data }) => {
         headerGroups,
         rows,
         prepareRow,
+        visibleColumns,
         allColumns,
         getToggleHideAllColumnsProps,
-        state,
         resetResizing
     } = useTable(
         {
-            columns,
+            columns: userColumns,
             initialState,
             data,
+            updateMyData,
             defaultColumn
         },
         useBlockLayout,
         useResizeColumns,
         useSticky,
-        useFilters
+        useFilters,
+        useExpanded
     );
 
-    const firstPageRows = rows.slice(0, 20);
+    // const firstPageRows = rows.slice(0, 20);
 
     // Render the UI for your table
     return (
@@ -100,7 +102,7 @@ const Table = ({ columns, data }) => {
                             <div key={column.id}>
                                 <label>
                                     <input type="checkbox" {...column.getToggleHiddenProps()} />{' '}
-                                    {column.id}
+                                    {column.Header}
                                 </label>
                             </div>
                         ))}
@@ -128,20 +130,28 @@ const Table = ({ columns, data }) => {
                 </thead>
 
                 <tbody {...getTableBodyProps()} className="body">
-                    {firstPageRows.map((row, i) => {
+                    {rows.map((row, i) => {
                         prepareRow(row)
                         return (
-                            <tr {...row.getRowProps()} className="tr">
-                                {row.cells.map(cell => {
-                                    return <td {...cell.getCellProps()} className="td">{cell.render('Cell')}</td>
-                                })}
-                            </tr>
+                            <React.Fragment key={i} >
+                                <tr {...row.getRowProps()} className="tr">
+                                    {row.cells.map(cell => {
+                                        return <td {...cell.getCellProps()} className="td">{cell.render('Cell')}</td>
+                                    })}
+                                </tr>
+                                {row.isExpanded ? (
+                                    <tr>
+                                        <td colSpan={visibleColumns.length}>
+                                            {renderRowSubComponent({ row })}
+                                        </td>
+                                    </tr>
+                                ) : null}
+                            </React.Fragment>
                         )
                     })}
                 </tbody>
 
             </table>
-            <pre>{JSON.stringify(state, null, 2)}</pre>
         </>
     )
 };

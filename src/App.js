@@ -1,7 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import { data } from './Components/makeData';
 import Table from './Components/Table';
+import { AiOutlineRight, AiOutlineDown } from "react-icons/ai";
+import TextField from '@mui/material/TextField';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import Stack from '@mui/material/Stack';
+import makeData from './Components/makeData';
 
 const Styles = styled.div`
 padding: 1rem;
@@ -31,10 +37,18 @@ padding: 1rem;
         border-right: 0;
       }
 
+      input {
+        font-size: 1rem;
+        padding: 5px;
+        width:95%;
+        margin: 0px;
+        border: 0;
+      }
+
       .resizer {
         display: inline-block;
         background: blue;
-        width: 10px;
+        width: 5px;
         height: 100%;
         position: absolute;
         right: 0;
@@ -89,8 +103,94 @@ padding: 1rem;
 `;
 
 function App() {
+
+  const [data, setData] = React.useState(makeData());
+
+  // Create an editable cell renderer
+  const EditableCell = ({
+    value: initialValue,
+    row: { index },
+    column: { id },
+    updateMyData,
+  }) => {
+    const [value, setValue] = React.useState(initialValue)
+
+    const onChange = e => {
+      setValue(e.target.value)
+    }
+
+    const onBlur = () => {
+      updateMyData(index, id, value)
+    }
+
+    React.useEffect(() => {
+      setValue(initialValue)
+    }, [initialValue])
+
+    return <input value={value} onChange={onChange} onBlur={onBlur} />
+  }
+
+  // Create an editable cell renderer
+  const EditableDate = ({
+    value: initialValue,
+    row: { index },
+    column: { id },
+    updateMyData,
+  }) => {
+    const [value, setValue] = React.useState(initialValue);
+
+    const onBlur = () => {
+      updateMyData(index, id, value)
+    }
+
+    React.useEffect(() => {
+      setValue(initialValue)
+    }, [initialValue])
+
+    return (
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <Stack spacing={3}>
+          <DesktopDatePicker
+            value={value}
+            inputFormat="yyyy-MM-dd"
+            onBlur={onBlur}
+            onChange={(newValue) => {
+              setValue(newValue);
+            }}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </Stack>
+      </LocalizationProvider>
+    );
+  }
+
+  const updateMyData = (rowIndex, columnId, value) => {
+    setData((old) =>
+      old.map((row, index) => {
+        if (index === rowIndex) {
+          return {
+            ...old[rowIndex],
+            [columnId]: value
+          };
+        }
+        return row;
+      })
+    );
+  };
+
   const columns = React.useMemo(
     () => [
+      {
+        Header: "Expand",
+        sticky: 'left',
+        id: 'expander',
+        width: 75,
+        Cell: ({ row }) => (
+          <span {...row.getToggleRowExpandedProps()}>
+            {row.isExpanded ? <AiOutlineDown /> : <AiOutlineRight />}
+          </span>
+        ),
+      },
       {
         Header: 'Sticky Columns',
         sticky: 'left',
@@ -103,8 +203,14 @@ function App() {
           {
             Header: 'Title',
             accessor: 'title',
-            width: 320
+            width: 320,
+            Cell: EditableCell
           },
+          {
+            Header: 'Assigned To',
+            accessor: 'assignedto.name',
+            width: 150
+          }
 
         ],
       },
@@ -113,7 +219,9 @@ function App() {
         columns: [
           {
             Header: 'Deadline',
-            accessor: 'deadline'
+            accessor: 'deadline',
+            width: 160,
+            Cell: EditableDate
           },
           {
             Header: 'Due Date',
@@ -147,9 +255,28 @@ function App() {
     []
   )
 
+  const renderRowSubComponent = React.useCallback(
+    ({ row }) => (
+      <>
+        <pre
+          style={{
+            fontSize: '10px',
+          }}
+        >
+          <code>{JSON.stringify({ values: row.values }, null, 2)}</code>
+        </pre>
+      </>
+    ),
+    []
+  )
+
   return (
     <Styles>
-      <Table columns={columns} data={data} />
+      <Table
+        columns={columns}
+        data={data}
+        updateMyData={updateMyData}
+        renderRowSubComponent={renderRowSubComponent} />
     </Styles>
   )
 }
