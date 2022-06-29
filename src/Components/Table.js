@@ -22,7 +22,7 @@ const Table = ({ columns: userColumns, updateMyData, data, renderRowSubComponent
         }
     )
 
-    const initialState = { hiddenColumns: ['description', 'priority', 'progress', 'createdby'] };
+    const initialState = { hiddenColumns: ['description', 'priority', 'progress'] };
 
     // Filtering section
     function DefaultColumnFilter({
@@ -58,7 +58,6 @@ const Table = ({ columns: userColumns, updateMyData, data, renderRowSubComponent
         headerGroups,
         rows,
         prepareRow,
-        visibleColumns,
         allColumns,
         getToggleHideAllColumnsProps,
         resetResizing
@@ -82,14 +81,14 @@ const Table = ({ columns: userColumns, updateMyData, data, renderRowSubComponent
     // Render the UI for your table
     return (
         <>
-            <button style={{ borderRadius: '2.5px', background: 'black', color: 'white', marginBottom: '10px', cursor: 'pointer', fontWeight: '500' }} onClick={resetResizing}>Reset Resizing</button>
+            <button style={{ position: 'fixed', top: '5px', left: '5px', zIndex: '3', borderRadius: '2.5px', background: 'black', color: 'white', marginBottom: '10px', cursor: 'pointer', fontWeight: '500' }} onClick={resetResizing}>Reset Resizing</button>
 
             {columnHidden ?
-                <div style={{ position: 'fixed', right: '5px', zIndex: '3' }}>
-                    <button style={{ border: "none", color: 'white', background: 'black', padding: '0', margin: '0' }} onClick={() => setColumnHidden(false)}><BsPlus size={25} /></button>
+                <div style={{ position: 'fixed', top: '5px', right: '5px', zIndex: '3' }}>
+                    <button style={{ borderRadius: '2.5px', border: "none", color: 'white', background: 'black', padding: '0', margin: '0' }} onClick={() => setColumnHidden(false)}><BsPlus size={25} /></button>
                 </div>
                 :
-                <div style={{ position: 'fixed', right: '5px', zIndex: '3' }}>
+                <div style={{ position: 'fixed', top: '5px', right: '5px', zIndex: '3' }}>
                     <div style={{ border: '1px black solid', width: '120px', marginBottom: '5px', background: 'black', color: 'white' }}>
                         <div style={{ display: 'flex', justifyContent: 'end' }}>
                             <button style={{ color: 'white', border: "none", background: 'none', padding: '0', margin: '0' }} onClick={() => setColumnHidden(true)}><AiOutlineClose size={20} /></button>
@@ -141,8 +140,12 @@ const Table = ({ columns: userColumns, updateMyData, data, renderRowSubComponent
                                 </tr>
                                 {row.isExpanded ? (
                                     <tr>
-                                        <td colSpan={visibleColumns.length}>
-                                            {renderRowSubComponent({ row })}
+                                        <td style={{ padding: '10px 75px', margin: '0px', border: '1px solid #ddd', width: '100%' }}>
+                                            Title : {row.original.title}
+                                            <br />
+                                            Description : {row.original.description}
+                                            <br />
+                                            Progress : {row.original.progress}
                                         </td>
                                     </tr>
                                 ) : null}

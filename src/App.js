@@ -104,7 +104,7 @@ padding: 1rem;
 
 function App() {
 
-  const [data, setData] = React.useState(makeData());
+  const [data, setData] = React.useState(() => makeData());
 
   // Create an editable cell renderer
   const EditableCell = ({
@@ -139,8 +139,9 @@ function App() {
   }) => {
     const [value, setValue] = React.useState(initialValue);
 
-    const onBlur = () => {
-      updateMyData(index, id, value)
+    const onChange = (newValue) => {
+      setValue(newValue);
+      updateMyData(index, id, value);
     }
 
     React.useEffect(() => {
@@ -153,10 +154,7 @@ function App() {
           <DesktopDatePicker
             value={value}
             inputFormat="yyyy-MM-dd"
-            onBlur={onBlur}
-            onChange={(newValue) => {
-              setValue(newValue);
-            }}
+            onChange={onChange}
             renderInput={(params) => <TextField {...params} />}
           />
         </Stack>
@@ -205,18 +203,18 @@ function App() {
             accessor: 'title',
             width: 320,
             Cell: EditableCell
-          },
-          {
-            Header: 'Assigned To',
-            accessor: 'assignedto.name',
-            width: 150
           }
-
         ],
       },
       {
         Header: 'Non-Sticky Columns',
         columns: [
+          {
+            Header: 'Assigned To',
+            accessor: 'assignedto.name',
+            width: 150,
+            Cell: EditableCell
+          },
           {
             Header: 'Deadline',
             accessor: 'deadline',
@@ -229,7 +227,9 @@ function App() {
           },
           {
             Header: 'End Date',
-            accessor: 'enddate'
+            accessor: 'enddate',
+            width: 160,
+            Cell: EditableDate
           },
           {
             Header: 'Description',
@@ -242,41 +242,23 @@ function App() {
           },
           {
             Header: 'Progress',
-            accessor: 'progress'
-          },
-          {
-            Header: 'Created By',
-            accessor: 'createdby',
-            width: 350
-          },
+            accessor: 'progress',
+            Cell: EditableCell
+          }
         ],
       },
     ],
     []
   )
 
-  const renderRowSubComponent = React.useCallback(
-    ({ row }) => (
-      <>
-        <pre
-          style={{
-            fontSize: '10px',
-          }}
-        >
-          <code>{JSON.stringify({ values: row.values }, null, 2)}</code>
-        </pre>
-      </>
-    ),
-    []
-  )
-
   return (
     <Styles>
+      <h4 style={{ textAlign: 'center', margin: '0px 0px 20px' }}>Welcome to React Table</h4>
       <Table
         columns={columns}
         data={data}
         updateMyData={updateMyData}
-        renderRowSubComponent={renderRowSubComponent} />
+      />
     </Styles>
   )
 }
