@@ -104,6 +104,7 @@ padding: 1rem;
 function App() {
 
   const [data, setData] = React.useState([]);
+  console.log(data);
 
   React.useEffect(() => {
     fetch('https://gentle-cove-52021.herokuapp.com/data')
