@@ -7,7 +7,6 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import Stack from '@mui/material/Stack';
-import makeData from './Components/makeData';
 
 const Styles = styled.div`
 padding: 1rem;
@@ -104,7 +103,13 @@ padding: 1rem;
 
 function App() {
 
-  const [data, setData] = React.useState(() => makeData());
+  const [data, setData] = React.useState([]);
+
+  React.useEffect(() => {
+    fetch('https://gentle-cove-52021.herokuapp.com/data')
+      .then(res => res.json())
+      .then(data => setData(data));
+  }, [])
 
   // Create an editable cell renderer
   const EditableCell = ({
