@@ -46,8 +46,8 @@ padding: 1rem;
 
       .resizer {
         display: inline-block;
-        background: blue;
-        width: 5px;
+        background: black;
+        width: 4.5px;
         height: 100%;
         position: absolute;
         right: 0;
@@ -57,7 +57,7 @@ padding: 1rem;
         touch-action:none;
 
         &.isResizing {
-          background: red;
+          background: green;
         }
       }
     }
@@ -188,7 +188,7 @@ function App() {
         Header: "Expand",
         sticky: 'left',
         id: 'expander',
-        width: 75,
+        width: 100,
         Cell: ({ row }) => (
           <span {...row.getToggleRowExpandedProps()}>
             {row.isExpanded ? <AiOutlineDown /> : <AiOutlineRight />}

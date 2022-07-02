@@ -4,7 +4,7 @@ import { BsPlus } from "react-icons/bs";
 import { AiOutlineClose } from "react-icons/ai";
 import { useSticky } from 'react-table-sticky';
 
-const Table = ({ columns: userColumns, updateMyData, data, renderRowSubComponent }) => {
+const Table = ({ columns: userColumns, updateMyData, data }) => {
 
     // Default columns and Hiding columns section
     const [columnHidden, setColumnHidden] = useState(true);
@@ -44,7 +44,7 @@ const Table = ({ columns: userColumns, updateMyData, data, renderRowSubComponent
     const defaultColumn = React.useMemo(
         () => ({
             Filter: DefaultColumnFilter,
-            minWidth: 75,
+            minWidth: 100,
             width: 125,
             maxWidth: 400
         }),
@@ -140,12 +140,39 @@ const Table = ({ columns: userColumns, updateMyData, data, renderRowSubComponent
                                 </tr>
                                 {row.isExpanded ? (
                                     <tr>
-                                        <td style={{ padding: '10px 75px', margin: '0px', border: '1px solid #ddd', width: '100%' }}>
-                                            Title : {row.original.title}
-                                            <br />
-                                            Description : {row.original.description}
-                                            <br />
-                                            Progress : {row.original.progress}
+                                        <td style={{ margin: '0px', border: '1px solid #ddd', width: '100%' }}>
+
+                                            {row.original.assignedto?.id ? <h4 style={{ padding: '10px 50px', margin: '0px', borderBlockEnd: '2px solid #ddd' }}>Details of Assigned Person</h4> : null}
+
+                                            {row.original.assignedto?.email ?
+                                                <div style={{ padding: '5px 100px', borderBlockEnd: '1px solid #ddd' }}>
+                                                    <span style={{ fontWeight: 'bold' }}>Email : </span>
+                                                    {row.original.assignedto.email}
+                                                </div> : null
+                                            }
+
+                                            {row.original.assignedto?.id ?
+                                                <div style={{ padding: '5px 100px' }}>
+                                                    <span style={{ fontWeight: 'bold' }}>ID : </span>
+                                                    {row.original.assignedto.id}
+                                                </div> : null
+                                            }
+
+                                            {row.original.dependentontask?.tasknum ? <h4 style={{ padding: '10px 50px', margin: '0px', borderBlockEnd: '2px solid #ddd' }}>Details of Dependent Task</h4> : null}
+
+                                            {row.original.dependentontask?.tasknum ?
+                                                <div style={{ padding: '5px 100px', borderBlockEnd: '1px solid #ddd' }}>
+                                                    <span style={{ fontWeight: 'bold' }}>Task Number : </span>
+                                                    {row.original.dependentontask.tasknum}
+                                                </div> : null
+                                            }
+
+                                            {row.original.dependentontask?.taskstatus?.status ?
+                                                <div style={{ padding: '5px 100px' }}>
+                                                    <span style={{ fontWeight: 'bold' }}>Status : </span>
+                                                    {row.original.dependentontask.taskstatus.status}
+                                                </div> : null
+                                            }
                                         </td>
                                     </tr>
                                 ) : null}
